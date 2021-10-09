@@ -71,16 +71,37 @@ enum WaypointType {
 }
 
 model WaypointSet {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  waypoints Waypoint[]
 }
 
 model Waypoint {
-  id           Int          @id @default(autoincrement())
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  name         String
-  waypointType WaypointType
+  id            Int          @id @default(autoincrement())
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  name          String
+  waypointType  WaypointType @default(STEERPOINT)
+  coordinate    Coordinate   @relation(fields: [coordinateId], references: [id])
+  coordinateId  Int
+  WaypointSet   WaypointSet? @relation(fields: [waypointSetId], references: [id])
+  waypointSetId Int?
+}
+
+enum ElevationUnit {
+  FEET
+  METERS
+}
+
+model Coordinate {
+  id            Int           @id @default(autoincrement())
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  latitude      Float
+  longitude     Float
+  elevation     Int
+  elevationUnit ElevationUnit
+  Waypoint      Waypoint[]
 }
