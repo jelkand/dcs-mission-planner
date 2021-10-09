@@ -64,6 +64,11 @@ model Token {
 //   RESET_PASSWORD
 // }
 
+enum WaypointType {
+  STEERPOINT
+  BULLSEYE
+}
+
 model WaypointSet {
   id        Int      @id @default(autoincrement())
   name      String
