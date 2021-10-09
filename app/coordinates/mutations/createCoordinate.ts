@@ -3,7 +3,10 @@ import db from "db"
 import { z } from "zod"
 
 const CreateCoordinate = z.object({
-  name: z.string(),
+  latitude: z.number().gte(-90).lte(90),
+  longitude: z.number().gte(-180).lte(180),
+  elevation: z.number().int(),
+  elevationUnit: z.enum(["FEET", "METERS"]),
 })
 
 export default resolver.pipe(
