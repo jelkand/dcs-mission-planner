@@ -1,12 +1,12 @@
 import { resolver } from "blitz"
-import db from "db"
+import db, { ElevationUnit } from "db"
 import { z } from "zod"
 
 const CreateCoordinate = z.object({
   latitude: z.number().gte(-90).lte(90),
   longitude: z.number().gte(-180).lte(180),
   elevation: z.number().int(),
-  elevationUnit: z.enum(["FEET", "METERS"]),
+  elevationUnit: z.nativeEnum(ElevationUnit),
 })
 
 export default resolver.pipe(

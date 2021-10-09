@@ -45,8 +45,6 @@ model Token {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   hashedToken String
-  // type        String
-  // See note below about TokenType enum
   type        TokenType
   expiresAt   DateTime
   sentTo      String
@@ -56,10 +54,6 @@ model Token {
 
   @@unique([hashedToken, type])
 }
-
-// NOTE: It's highly recommended to use an enum for the token type
-//       but enums only work in Postgres.
-//       See: https://blitzjs.com/docs/database-overview#switch-to-postgresql
 
 enum TokenType {
   RESET_PASSWORD
@@ -79,15 +73,16 @@ model WaypointSet {
 }
 
 model Waypoint {
-  id            Int          @id @default(autoincrement())
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  name          String
-  waypointType  WaypointType @default(STEERPOINT)
-  coordinate    Coordinate   @relation(fields: [coordinateId], references: [id])
-  coordinateId  Int
-  WaypointSet   WaypointSet? @relation(fields: [waypointSetId], references: [id])
-  waypointSetId Int?
+  id                 Int                 @id @default(autoincrement())
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  name               String
+  waypointType       WaypointType        @default(STEERPOINT)
+  coordinate         Coordinate          @relation(fields: [coordinateId], references: [id])
+  coordinateId       Int
+  WaypointSet        WaypointSet?        @relation(fields: [waypointSetId], references: [id])
+  waypointSetId      Int?
+  WaypointInputFlags WaypointInputFlag[]
 }
 
 enum ElevationUnit {
@@ -102,6 +97,20 @@ model Coordinate {
   latitude      Float
   longitude     Float
   elevation     Int
-  elevationUnit ElevationUnit
+  elevationUnit ElevationUnit @default(FEET)
   Waypoint      Waypoint[]
+}
+
+model WaypointInputFlag {
+  id          Int       @id @default(autoincrement())
+  Waypoint    Waypoint  @relation(fields: [waypointId], references: [id])
+  waypointId  Int
+  InputFlag   InputFlag @relation(fields: [inputFlagId], references: [id])
+  inputFlagId Int
+}
+
+model InputFlag {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  WaypointInputFlag WaypointInputFlag[]
 }
