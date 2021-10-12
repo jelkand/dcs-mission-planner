@@ -1,6 +1,10 @@
 {
   "name": "dcs-mission-planner",
   "version": "1.0.0",
+  "engines": {
+    "node": "14.x",
+    "npm": "8.x"
+  },
   "scripts": {
     "dev": "blitz dev",
     "build": "blitz build",
