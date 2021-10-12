@@ -1,5 +1,11 @@
 import { Coordinate } from "db"
-import { DDMCoordinate, Direction, toDDM } from "./transformers"
+import {
+  DDMCoordinate,
+  ddmToDecimalValue,
+  decimalValueToDDM,
+  Direction,
+  toDDM,
+} from "./transformers"
 
 describe("Coordinate Transformers", () => {
   it("Converts a decimal degree coordinate to DDM", () => {
@@ -26,5 +32,21 @@ describe("Coordinate Transformers", () => {
     const actual = toDDM(initialCoordinate)
 
     expect(actual).toStrictEqual(expected)
+  })
+
+  it("converts a DDM value to a decimal", () => {
+    const input = {
+      direction: Direction.S,
+      degrees: 77,
+      minutes: 30,
+      decimalMinutes: 5000,
+    }
+
+    const expected = -77.508333
+    const actual = ddmToDecimalValue(input)
+
+    console.log({ expected, actual })
+
+    expect(actual).toBeCloseTo(expected)
   })
 })

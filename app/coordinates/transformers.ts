@@ -7,6 +7,8 @@ export enum Direction {
   W,
 }
 
+const positiveDirections = new Set([Direction.N, Direction.E])
+
 interface DDM {
   direction: Direction
   degrees: number
@@ -58,4 +60,10 @@ export const toDDM = ({
   const longitude = decimalValueToDDM(decimalLong, false) as DDMLongitude
 
   return { latitude, longitude }
+}
+
+export const ddmToDecimalValue = ({ direction, degrees, minutes, decimalMinutes }: DDM): number => {
+  const directionCoefficient = positiveDirections.has(direction) ? 1 : -1
+  const decimal = (minutes + decimalMinutes / 10000) / 60
+  return directionCoefficient * (degrees + decimal)
 }
