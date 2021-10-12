@@ -5,6 +5,7 @@ import { z } from "zod"
 const CreateWaypoint = z.object({
   name: z.string(),
   waypointSetId: z.number(),
+  coordinateId: z.number(),
 })
 
 export default resolver.pipe(resolver.zod(CreateWaypoint), resolver.authorize(), async (input) => {
