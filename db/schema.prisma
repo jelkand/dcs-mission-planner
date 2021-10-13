@@ -74,21 +74,20 @@ model WaypointSet {
   name      String
   createdAt DateTime              @default(now())
   updatedAt DateTime              @updatedAt
-  Waypoints WaypointSetWaypoint[]
+  waypoints WaypointSetWaypoint[]
 }
 
 model WaypointSetWaypoint {
   id            Int         @id @default(autoincrement())
-  WaypointSet   WaypointSet @relation(fields: [waypointSetId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  waypointSet   WaypointSet @relation(fields: [waypointSetId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   waypointSetId Int
-  Waypoint      Waypoint    @relation(fields: [waypointId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  waypoint      Waypoint    @relation(fields: [waypointId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   waypointId    Int
-  InputFlag     InputFlag[]
+  inputFlag     InputFlag[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
   elementOrder  Int         @default(0)
   sequenceNum   Int?
-
 }
 
 model Waypoint {
@@ -99,8 +98,7 @@ model Waypoint {
   waypointType WaypointType          @default(STEERPOINT)
   coordinate   Coordinate            @relation(fields: [coordinateId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   coordinateId Int
-  WaypointSets WaypointSetWaypoint[]
-
+  waypointSets WaypointSetWaypoint[]
 }
 
 enum ElevationUnit {
@@ -116,11 +114,11 @@ model Coordinate {
   longitude     Float
   elevation     Int
   elevationUnit ElevationUnit @default(FEET)
-  Waypoint      Waypoint[]
+  waypoint      Waypoint[]
 }
 
 model InputFlag {
   id                  Int                   @id @default(autoincrement())
   name                String
-  WaypointSetWaypoint WaypointSetWaypoint[]
+  waypointSetWaypoint WaypointSetWaypoint[]
 }

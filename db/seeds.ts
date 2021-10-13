@@ -16,69 +16,104 @@ const seed = async () => {
       waypoints: {
         create: [
           {
-            name: "CVN-73 George Washington",
-            coordinate: {
+            elementOrder: 0,
+            sequenceNum: 1,
+            waypoint: {
               create: {
-                latitude: 24.877667,
-                longitude: 53.888333,
-                elevation: 0,
-                elevationUnit: "FEET",
+                name: "CVN-73 George Washington",
+                coordinate: {
+                  create: {
+                    latitude: 24.877667,
+                    longitude: 53.888333,
+                    elevation: 0,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
           {
-            name: "AAR",
-            coordinate: {
+            elementOrder: 1,
+            sequenceNum: 1,
+            waypoint: {
               create: {
-                latitude: 25.1115,
-                longitude: 54.4,
-                elevation: 22000,
-                elevationUnit: "FEET",
+                name: "AAR",
+                coordinate: {
+                  create: {
+                    latitude: 25.1115,
+                    longitude: 54.4,
+                    elevation: 22000,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
           {
-            name: "PUSH/FENCE",
-            coordinate: {
+            elementOrder: 2,
+            sequenceNum: 1,
+            waypoint: {
               create: {
-                latitude: 25.401333,
-                longitude: 54.659167,
-                elevation: 30000,
-                elevationUnit: "FEET",
+                name: "PUSH/FENCE",
+                coordinate: {
+                  create: {
+                    latitude: 25.401333,
+                    longitude: 54.659167,
+                    elevation: 30000,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
           {
-            name: "SEAD/DEAD",
-            coordinate: {
+            elementOrder: 3,
+            sequenceNum: 1,
+            waypoint: {
               create: {
-                latitude: 25.879333,
-                longitude: 55.033833,
-                elevation: 300000,
-                elevationUnit: "FEET",
+                name: "SEAD/DEAD",
+                coordinate: {
+                  create: {
+                    latitude: 25.879333,
+                    longitude: 55.033833,
+                    elevation: 300000,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
           {
-            name: "ALAMO",
-            coordinate: {
+            elementOrder: 4,
+            sequenceNum: 1,
+            waypoint: {
               create: {
-                latitude: 24.877667,
-                longitude: 53.888333,
-                elevation: 30000,
-                elevationUnit: "FEET",
+                name: "ALAMO",
+                coordinate: {
+                  create: {
+                    latitude: 24.877667,
+                    longitude: 53.888333,
+                    elevation: 30000,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
           {
-            name: "BULLSEYE",
-            waypointType: "BULLSEYE",
-            coordinate: {
+            elementOrder: 5,
+            waypoint: {
               create: {
-                latitude: 26.574567,
-                longitude: 56.311767,
-                elevation: 0,
-                elevationUnit: "FEET",
+                waypointType: "BULLSEYE",
+                name: "BULLSEYE",
+                coordinate: {
+                  create: {
+                    latitude: 26.574567,
+                    longitude: 56.311767,
+                    elevation: 0,
+                    elevationUnit: "FEET",
+                  },
+                },
               },
             },
           },
