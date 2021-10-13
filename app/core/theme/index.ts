@@ -12,7 +12,7 @@ const breakpoints = createBreakpoints({
 const extendThemeObj: ThemeOverride = {
   config: {
     initialColorMode: "light",
-    useSystemColorMode: true,
+    useSystemColorMode: false,
   },
   breakpoints,
 }

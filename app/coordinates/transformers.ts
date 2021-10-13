@@ -1,13 +1,7 @@
 import { Coordinate } from "db"
+import { Direction } from "./Direction"
 
-export enum Direction {
-  N,
-  E,
-  S,
-  W,
-}
-
-const positiveDirections = new Set([Direction.N, Direction.E])
+export const positiveDirections = new Set([Direction.N, Direction.E])
 
 interface DDM {
   direction: Direction

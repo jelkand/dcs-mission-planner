@@ -1,6 +1,6 @@
 import { ReactNode, useRef } from "react"
 import { Head } from "blitz"
-import { Box } from "@chakra-ui/layout"
+import { Box, Container } from "@chakra-ui/layout"
 import {
   useDisclosure,
   Drawer,
@@ -27,10 +27,9 @@ const Layout = ({ title, children }: LayoutProps) => {
         <title>{title || "dcs-mission-planner"}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <Button ref={menuBtnRef} colorScheme="teal" onClick={onOpen}>
+      {/* <Button ref={menuBtnRef} colorScheme="teal" onClick={onOpen}>
         Open
-      </Button>
+      </Button> */}
 
       <Drawer isOpen={isOpen} placement="right" onClose={onClose} finalFocusRef={menuBtnRef}>
         <DrawerOverlay />
@@ -48,8 +47,9 @@ const Layout = ({ title, children }: LayoutProps) => {
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-
-      <Box>{children}</Box>
+      <Container maxW="container.xl" centerContent>
+        <Box padding="4">{children}</Box>
+      </Container>
     </>
   )
 }

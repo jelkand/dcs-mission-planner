@@ -36,12 +36,13 @@
     "@types/ramda": "0.27.45",
     "blitz": "0.41.0",
     "final-form": "4.20.4",
+    "format-string-by-pattern": "1.2.2",
     "framer-motion": "3.2.0",
+    "prisma": "3.2.1",
     "ramda": "0.27.1",
     "react": "alpha",
     "react-dom": "alpha",
     "react-final-form": "6.5.7",
-    "prisma": "3.2.1",
     "zod": "3.9.8"
   },
   "devDependencies": {

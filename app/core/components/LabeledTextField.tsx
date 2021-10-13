@@ -35,8 +35,8 @@ export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldPro
     return (
       <FormControl {...outerProps}>
         <FormLabel {...labelProps}>
-          {label}
           <Input {...input} disabled={submitting} {...props} ref={ref} />
+          {label}
         </FormLabel>
         {touched && normalizedError && (
           <div role="alert" style={{ color: "red" }}>
@@ -47,5 +47,3 @@ export const LabeledTextField = forwardRef<HTMLInputElement, LabeledTextFieldPro
     )
   }
 )
-
-export default LabeledTextField

@@ -1,11 +1,6 @@
 import { Coordinate } from "db"
-import {
-  DDMCoordinate,
-  ddmToDecimalValue,
-  decimalValueToDDM,
-  Direction,
-  toDDM,
-} from "./transformers"
+import { DDMCoordinate, ddmToDecimalValue, decimalValueToDDM, toDDM } from "./transformers"
+import { Direction } from "./Direction"
 
 describe("Coordinate Transformers", () => {
   it("Converts a decimal degree coordinate to DDM", () => {
@@ -44,8 +39,6 @@ describe("Coordinate Transformers", () => {
 
     const expected = -77.508333
     const actual = ddmToDecimalValue(input)
-
-    console.log({ expected, actual })
 
     expect(actual).toBeCloseTo(expected)
   })
