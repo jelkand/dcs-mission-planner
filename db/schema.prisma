@@ -19,10 +19,15 @@ model User {
   name           String?
   email          String   @unique
   hashedPassword String?
-  role           String   @default("USER")
+  role           Role     @default(USER)
 
   tokens   Token[]
   sessions Session[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Session {
@@ -65,24 +70,37 @@ enum WaypointType {
 }
 
 model WaypointSet {
-  id        Int        @id @default(autoincrement())
+  id        Int                   @id @default(autoincrement())
   name      String
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-  waypoints Waypoint[]
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  Waypoints WaypointSetWaypoint[]
+}
+
+model WaypointSetWaypoint {
+  id            Int         @id @default(autoincrement())
+  WaypointSet   WaypointSet @relation(fields: [waypointSetId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  waypointSetId Int
+  Waypoint      Waypoint    @relation(fields: [waypointId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  waypointId    Int
+  InputFlag     InputFlag[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  elementOrder  Int         @default(0)
+  sequenceNum   Int?
+
 }
 
 model Waypoint {
-  id                 Int                 @id @default(autoincrement())
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  name               String
-  waypointType       WaypointType        @default(STEERPOINT)
-  coordinate         Coordinate          @relation(fields: [coordinateId], references: [id])
-  coordinateId       Int
-  WaypointSet        WaypointSet?        @relation(fields: [waypointSetId], references: [id])
-  waypointSetId      Int?
-  WaypointInputFlags WaypointInputFlag[]
+  id           Int                   @id @default(autoincrement())
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  name         String
+  waypointType WaypointType          @default(STEERPOINT)
+  coordinate   Coordinate            @relation(fields: [coordinateId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  coordinateId Int
+  WaypointSets WaypointSetWaypoint[]
+
 }
 
 enum ElevationUnit {
@@ -101,16 +119,8 @@ model Coordinate {
   Waypoint      Waypoint[]
 }
 
-model WaypointInputFlag {
-  id          Int       @id @default(autoincrement())
-  Waypoint    Waypoint  @relation(fields: [waypointId], references: [id])
-  waypointId  Int
-  InputFlag   InputFlag @relation(fields: [inputFlagId], references: [id])
-  inputFlagId Int
-}
-
 model InputFlag {
-  id                Int                 @id @default(autoincrement())
-  name              String
-  WaypointInputFlag WaypointInputFlag[]
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  WaypointSetWaypoint WaypointSetWaypoint[]
 }
