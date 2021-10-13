@@ -1,4 +1,5 @@
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
+import { Role } from "db"
 import { render } from "test/utils"
 
 import Home from "./index"
@@ -16,7 +17,7 @@ test.skip("renders blitz documentation link", () => {
     id: 1,
     name: "User",
     email: "user@email.com",
-    role: "user",
+    role: Role.USER,
   })
 
   const { getByText } = render(<Home />)
