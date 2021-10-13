@@ -72,7 +72,7 @@ const EditWaypointSetPage: BlitzPage = () => {
   )
 }
 
-EditWaypointSetPage.authenticate = true
+// EditWaypointSetPage.authenticate = true
 EditWaypointSetPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default EditWaypointSetPage

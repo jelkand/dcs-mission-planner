@@ -40,7 +40,7 @@ const NewWaypointSetPage: BlitzPage = () => {
   )
 }
 
-NewWaypointSetPage.authenticate = true
+// NewWaypointSetPage.authenticate = true
 NewWaypointSetPage.getLayout = (page) => <Layout title={"Create New WaypointSet"}>{page}</Layout>
 
 export default NewWaypointSetPage

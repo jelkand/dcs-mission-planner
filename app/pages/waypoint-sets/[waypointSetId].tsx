@@ -57,7 +57,7 @@ const ShowWaypointSetPage: BlitzPage = () => {
   )
 }
 
-ShowWaypointSetPage.authenticate = true
+// ShowWaypointSetPage.authenticate = true
 ShowWaypointSetPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowWaypointSetPage

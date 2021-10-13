@@ -61,7 +61,7 @@ const WaypointSetsPage: BlitzPage = () => {
   )
 }
 
-WaypointSetsPage.authenticate = false
+// WaypointSetsPage.authenticate = false
 WaypointSetsPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default WaypointSetsPage
