@@ -1,7 +1,8 @@
-import { resolver, SecurePassword, AuthenticationError } from "blitz"
+import { AuthenticationError, resolver, SecurePassword } from "blitz"
 import db from "db"
-import { Login } from "../validations"
 import { Role } from "types"
+
+import { Login } from "../validations"
 
 export const authenticateUser = async (rawEmail: string, rawPassword: string) => {
   const email = rawEmail.toLowerCase().trim()

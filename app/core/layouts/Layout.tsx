@@ -1,17 +1,17 @@
-import { ReactNode, useRef } from "react"
-import { Head } from "blitz"
 import { Box, Container } from "@chakra-ui/layout"
 import {
-  useDisclosure,
+  Button,
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Button,
+  useDisclosure,
 } from "@chakra-ui/react"
+import { Head } from "blitz"
+import { ReactNode, useRef } from "react"
 
 type LayoutProps = {
   title?: string

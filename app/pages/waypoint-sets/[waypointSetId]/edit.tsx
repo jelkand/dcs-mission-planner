@@ -1,9 +1,9 @@
-import { Suspense } from "react"
-import { Head, Link, useRouter, useQuery, useMutation, useParam, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
-import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
+import { FORM_ERROR, WaypointSetForm } from "app/waypoint-sets/components/WaypointSetForm"
 import updateWaypointSet from "app/waypoint-sets/mutations/updateWaypointSet"
-import { WaypointSetForm, FORM_ERROR } from "app/waypoint-sets/components/WaypointSetForm"
+import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
+import { BlitzPage, Head, Link, Routes, useMutation, useParam, useQuery, useRouter } from "blitz"
+import { Suspense } from "react"
 
 export const EditWaypointSet = () => {
   const router = useRouter()

@@ -1,8 +1,9 @@
-import { ElevationUnit, Coordinate } from "db"
+import Form, { FormProps } from "app/core/components/Form"
+import { Coordinate, ElevationUnit } from "db"
 import React, { PropsWithoutRef } from "react"
 import { z } from "zod"
+
 import { CoordinateFields } from "./CoordinateFields"
-import Form, { FormProps } from "app/core/components/Form"
 
 const Coordinate = z.object({
   latitude: z.number().gte(-90).lte(90),

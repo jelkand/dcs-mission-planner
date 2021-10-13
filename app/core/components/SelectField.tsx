@@ -1,8 +1,7 @@
-import React, { forwardRef, ComponentPropsWithoutRef, PropsWithoutRef } from "react"
-import { useField, UseFieldConfig } from "react-final-form"
-
 import { FormControl, FormLabel } from "@chakra-ui/form-control"
 import { Select, VisuallyHidden } from "@chakra-ui/react"
+import React, { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from "react"
+import { useField, UseFieldConfig } from "react-final-form"
 
 export interface SelectFieldProps extends ComponentPropsWithoutRef<typeof Select> {
   /** Field name. */

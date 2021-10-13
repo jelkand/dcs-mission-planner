@@ -1,6 +1,7 @@
 import { Coordinate } from "db"
-import { DDMCoordinate, ddmToDecimalValue, decimalValueToDDM, toDDM } from "./transformers"
+
 import { Direction } from "./Direction"
+import { DDMCoordinate, ddmToDecimalValue, decimalValueToDDM, toDDM } from "./transformers"
 
 describe("Coordinate Transformers", () => {
   it("Converts a decimal degree coordinate to DDM", () => {

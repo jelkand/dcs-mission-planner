@@ -1,11 +1,8 @@
-import React, { forwardRef, ComponentPropsWithoutRef, PropsWithoutRef } from "react"
-import { useField, UseFieldConfig } from "react-final-form"
-
-import { Input } from "@chakra-ui/input"
 import { FormControl, FormLabel } from "@chakra-ui/form-control"
-import VisuallyHidden from "@chakra-ui/visually-hidden"
-import { Box, HStack } from "@chakra-ui/layout"
-import { InputGroup, InputRightElement } from "@chakra-ui/react"
+import { Input } from "@chakra-ui/input"
+import { InputGroup, InputRightElement, VisuallyHidden } from "@chakra-ui/react"
+import React, { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from "react"
+import { useField, UseFieldConfig } from "react-final-form"
 
 export interface InlineTextFieldProps extends ComponentPropsWithoutRef<typeof Input> {
   /** Field name. */
@@ -55,23 +52,14 @@ export const InlineTextField = forwardRef<HTMLInputElement, InlineTextFieldProps
       <FormControl {...outerProps}>
         <FormLabel mb="0" {...labelProps}>
           <VisuallyHidden>{label}</VisuallyHidden>
-          {/* <Box display="flex"> */}
           <InputGroup>
-            <Input
-              {...input}
-              disabled={submitting}
-              {...props}
-              ref={ref}
-              marginRight="0"
-              // _after={{ content: `"${decoration}"` }}
-            />
+            <Input {...input} disabled={submitting} {...props} ref={ref} marginRight="0" />
             {rightElementChildren ?? (
               <InputRightElement pointerEvents="none" paddingRight="6">
                 {rightElementChildren}
               </InputRightElement>
             )}
           </InputGroup>
-          {/* </Box> */}
         </FormLabel>
         {!hideErrors && touched && normalizedError && (
           <div role="alert" style={{ color: "red" }}>

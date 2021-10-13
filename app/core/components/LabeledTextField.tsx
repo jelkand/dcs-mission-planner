@@ -1,8 +1,7 @@
-import { forwardRef, ComponentPropsWithoutRef, PropsWithoutRef } from "react"
-import { useField, UseFieldConfig } from "react-final-form"
-
-import { Input } from "@chakra-ui/input"
 import { FormControl, FormLabel } from "@chakra-ui/form-control"
+import { Input } from "@chakra-ui/input"
+import { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef } from "react"
+import { useField, UseFieldConfig } from "react-final-form"
 
 export interface LabeledTextFieldProps extends ComponentPropsWithoutRef<typeof Input> {
   /** Field name. */

@@ -1,5 +1,4 @@
 import { extendTheme, ThemeOverride } from "@chakra-ui/react"
-
 import { createBreakpoints } from "@chakra-ui/theme-tools"
 // 2. Update the breakpoints as key-value pairs
 const breakpoints = createBreakpoints({

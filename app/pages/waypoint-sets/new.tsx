@@ -1,7 +1,7 @@
-import { Link, useRouter, useMutation, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
+import { FORM_ERROR, WaypointSetForm } from "app/waypoint-sets/components/WaypointSetForm"
 import createWaypointSet from "app/waypoint-sets/mutations/createWaypointSet"
-import { WaypointSetForm, FORM_ERROR } from "app/waypoint-sets/components/WaypointSetForm"
+import { BlitzPage, Link, Routes, useMutation, useRouter } from "blitz"
 
 const NewWaypointSetPage: BlitzPage = () => {
   const router = useRouter()

@@ -1,8 +1,8 @@
-import { Suspense } from "react"
-import { Head, Link, useRouter, useQuery, useParam, BlitzPage, useMutation, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
-import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
 import deleteWaypointSet from "app/waypoint-sets/mutations/deleteWaypointSet"
+import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
+import { BlitzPage, Head, Link, Routes, useMutation, useParam, useQuery, useRouter } from "blitz"
+import { Suspense } from "react"
 
 export const WaypointSet = () => {
   const router = useRouter()

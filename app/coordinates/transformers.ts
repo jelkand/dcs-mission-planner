@@ -1,4 +1,5 @@
 import { Coordinate } from "db"
+
 import { Direction } from "./Direction"
 
 export const positiveDirections = new Set([Direction.N, Direction.E])

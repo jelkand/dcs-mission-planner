@@ -1,7 +1,7 @@
-import { Suspense } from "react"
-import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getWaypointSets from "app/waypoint-sets/queries/getWaypointSets"
+import { BlitzPage, Head, Link, Routes, usePaginatedQuery, useRouter } from "blitz"
+import { Suspense } from "react"
 
 const ITEMS_PER_PAGE = 100
 
