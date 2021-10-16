@@ -2,7 +2,7 @@ import { paginate, resolver } from "blitz"
 import db, { Prisma } from "db"
 
 interface GetWaypointSetsInput
-  extends Pick<Prisma.WaypointSetFindManyArgs, "where" | "orderBy" | "skip" | "take"> {}
+  extends Pick<Prisma.WaypointSetFindManyArgs, "where" | "orderBy" | "skip" | "take" | "include"> {}
 
 export default resolver.pipe(
   // resolver.authorize(),
@@ -17,7 +17,19 @@ export default resolver.pipe(
       skip,
       take,
       count: () => db.waypointSet.count({ where }),
-      query: (paginateArgs) => db.waypointSet.findMany({ ...paginateArgs, where, orderBy }),
+      query: (paginateArgs) =>
+        db.waypointSet.findMany({
+          ...paginateArgs,
+          where,
+          orderBy,
+          include: {
+            _count: {
+              select: {
+                waypoints: true,
+              },
+            },
+          },
+        }),
     })
 
     return {

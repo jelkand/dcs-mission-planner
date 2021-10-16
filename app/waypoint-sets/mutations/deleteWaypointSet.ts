@@ -8,7 +8,7 @@ const DeleteWaypointSet = z.object({
 
 export default resolver.pipe(
   resolver.zod(DeleteWaypointSet),
-  resolver.authorize(),
+  // resolver.authorize(),
   async ({ id }) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const waypointSet = await db.waypointSet.deleteMany({ where: { id } })
