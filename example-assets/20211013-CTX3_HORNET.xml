@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--Exported from CombatFlite-->
+<Objects>
+  <Waypoints>
+    <Waypoint>
+      <Name>RAM1
+CVN-73 George Washington</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>24.878916354905</Latitude>
+        <Longitude>53.8877899065283</Longitude>
+        <Altitude>0</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+Texaco 1</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>25.134181353617</Latitude>
+        <Longitude>54.4059790402031</Longitude>
+        <Altitude>8534.4</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+PUSH</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>25.10905</Latitude>
+        <Longitude>54.8149166666667</Longitude>
+        <Altitude>8534.4</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+3</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>25.4718701360151</Latitude>
+        <Longitude>55.6953964512652</Longitude>
+        <Altitude>8534.4</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+4</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>25.3838989467605</Latitude>
+        <Longitude>56.0296809531773</Longitude>
+        <Altitude>8534.4</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+5</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>24.9672103622262</Latitude>
+        <Longitude>54.4097079542623</Longitude>
+        <Altitude>8534.4</Altitude>
+      </Position>
+    </Waypoint>
+    <Waypoint>
+      <Name>RAM1
+CVN-73 George Washington</Name>
+      <ShortName></ShortName>
+      <Position>
+        <Latitude>24.878916354905</Latitude>
+        <Longitude>53.8877899065283</Longitude>
+        <Altitude>457.2</Altitude>
+      </Position>
+    </Waypoint>
+  </Waypoints>
+</Objects>

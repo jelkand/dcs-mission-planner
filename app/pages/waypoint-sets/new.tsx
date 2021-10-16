@@ -1,7 +1,12 @@
 import Layout from "app/core/layouts/Layout"
-import { FORM_ERROR, WaypointSetForm } from "app/waypoint-sets/components/WaypointSetForm"
+import {
+  FORM_ERROR,
+  WaypointSetFromFileForm,
+} from "app/waypoint-sets/components/WaypointSetFromFileForm"
 import createWaypointSet from "app/waypoint-sets/mutations/createWaypointSet"
+import { CombatFliteSchema } from "app/waypoint-sets/transformers"
 import { BlitzPage, Link, Routes, useMutation, useRouter } from "blitz"
+import parser from "fast-xml-parser"
 
 const NewWaypointSetPage: BlitzPage = () => {
   const router = useRouter()
@@ -11,7 +16,7 @@ const NewWaypointSetPage: BlitzPage = () => {
     <div>
       <h1>Create New WaypointSet</h1>
 
-      <WaypointSetForm
+      <WaypointSetFromFileForm
         submitText="Create WaypointSet"
         // TODO use a zod schema for form validation
         //  - Tip: extract mutation's schema into a shared `validations.ts` file and
@@ -20,8 +25,18 @@ const NewWaypointSetPage: BlitzPage = () => {
         // initialValues={{}}
         onSubmit={async (values) => {
           try {
-            const waypointSet = await createWaypointSetMutation(values)
-            router.push(Routes.ShowWaypointSetPage({ waypointSetId: waypointSet.id }))
+            console.log(values)
+            const fr = new FileReader()
+            await fr.readAsText(values["waypoint-set-file"][0])
+            const text = await values["waypoint-set-file"][0].text()
+            console.log({ text })
+            const val = parser.validate(text)
+            console.log({ val })
+            const json = parser.parse(text, {}, true)
+            console.log(CombatFliteSchema.parse(json))
+            // console.log({ json })
+            // const waypointSet = await createWaypointSetMutation(values)
+            // router.push(Routes.ShowWaypointSetPage({ waypointSetId: waypointSet.id }))
           } catch (error: any) {
             console.error(error)
             return {
