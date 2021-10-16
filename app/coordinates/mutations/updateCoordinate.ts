@@ -12,7 +12,7 @@ const UpdateCoordinate = z.object({
 
 export default resolver.pipe(
   resolver.zod(UpdateCoordinate),
-  resolver.authorize(),
+  // resolver.authorize(),
   async ({ id, ...data }) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const coordinate = await db.coordinate.update({ where: { id }, data })

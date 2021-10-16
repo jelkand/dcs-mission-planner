@@ -11,7 +11,7 @@ const CreateCoordinate = z.object({
 
 export default resolver.pipe(
   resolver.zod(CreateCoordinate),
-  resolver.authorize(),
+  // resolver.authorize(),
   async (input) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const coordinate = await db.coordinate.create({ data: input })

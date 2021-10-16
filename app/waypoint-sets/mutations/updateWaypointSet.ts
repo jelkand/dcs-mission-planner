@@ -9,7 +9,7 @@ const UpdateWaypointSet = z.object({
 
 export default resolver.pipe(
   resolver.zod(UpdateWaypointSet),
-  resolver.authorize(),
+  // resolver.authorize(),
   async ({ id, ...data }) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
     const waypointSet = await db.waypointSet.update({ where: { id }, data })

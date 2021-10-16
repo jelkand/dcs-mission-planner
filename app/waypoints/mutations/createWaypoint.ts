@@ -8,9 +8,13 @@ const CreateWaypoint = z.object({
   coordinateId: z.number(),
 })
 
-export default resolver.pipe(resolver.zod(CreateWaypoint), resolver.authorize(), async (input) => {
-  // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const waypoint = await db.waypoint.create({ data: input })
+export default resolver.pipe(
+  resolver.zod(CreateWaypoint),
+  // resolver.authorize(),
+  async (input) => {
+    // TODO: in multi-tenant app, you must add validation to ensure correct tenant
+    const waypoint = await db.waypoint.create({ data: input })
 
-  return waypoint
-})
+    return waypoint
+  }
+)
