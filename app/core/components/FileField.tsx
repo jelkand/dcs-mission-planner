@@ -1,6 +1,6 @@
 import { FormControl, FormLabel } from "@chakra-ui/form-control"
-import { Input } from "@chakra-ui/input"
-import { Button } from "@chakra-ui/react"
+import { AttachmentIcon } from "@chakra-ui/icons"
+import { Input, InputGroup, InputLeftAddon } from "@chakra-ui/input"
 import React, { ComponentPropsWithoutRef, forwardRef, PropsWithoutRef, useRef } from "react"
 import { useField, UseFieldConfig } from "react-final-form"
 
@@ -9,6 +9,7 @@ export interface LabeledTextFieldProps extends ComponentPropsWithoutRef<typeof I
   name: string
   /** Field label. */
   label: string
+  placeholder?: string
   outerProps?: PropsWithoutRef<JSX.IntrinsicElements["div"]>
   labelProps?: ComponentPropsWithoutRef<"label">
   fieldProps?: UseFieldConfig<FileList>
@@ -16,7 +17,7 @@ export interface LabeledTextFieldProps extends ComponentPropsWithoutRef<typeof I
 }
 
 export const FileField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
-  ({ name, label, outerProps, fieldProps, accept, labelProps, ...props }, ref) => {
+  ({ name, label, outerProps, fieldProps, accept, labelProps, placeholder, ...props }, ref) => {
     const {
       input: { onChange, value, ...input },
       meta: { touched, error, submitError, submitting },
@@ -29,24 +30,26 @@ export const FileField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
     return (
       <FormControl {...outerProps}>
         <FormLabel {...labelProps}>
+          <InputGroup>
+            <InputLeftAddon>
+              <AttachmentIcon />
+            </InputLeftAddon>
+            <Input
+              {...input}
+              value={value[0]?.name || placeholder}
+              onClick={() => uploadButtonRef?.current?.click()}
+            ></Input>
+            <input
+              hidden
+              type="file"
+              ref={uploadButtonRef}
+              accept={accept}
+              {...input}
+              onChange={({ target }) => onChange(target.files)}
+              {...props}
+            />
+          </InputGroup>
           {label}
-          <Input
-            as="button"
-            size="sm"
-            variant="outline"
-            onClick={() => uploadButtonRef?.current?.click()}
-          >
-            Button
-          </Input>
-          <input
-            hidden
-            type="file"
-            ref={uploadButtonRef}
-            accept={accept}
-            {...input}
-            onChange={({ target }) => onChange(target.files)}
-            {...props}
-          />
         </FormLabel>
         {touched && normalizedError && (
           <div role="alert" style={{ color: "red" }}>

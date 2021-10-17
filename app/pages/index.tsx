@@ -1,10 +1,11 @@
 import { Box, HStack } from "@chakra-ui/layout"
 import logout from "app/auth/mutations/logout"
-import { CoordinateFields, DDMCoordinate } from "app/coordinates/components/CoordinateFields"
+import { CoordinateFields } from "app/coordinates/components/CoordinateFields"
 import { CoordinateForm } from "app/coordinates/components/CoordinateForm"
 import { DDMCoordinateForm } from "app/coordinates/components/DDMCoordinateForm"
 import { Direction } from "app/coordinates/Direction"
 import { toDDM } from "app/coordinates/transformers"
+import { DDMCoordinate } from "app/coordinates/validations"
 import Form from "app/core/components/Form"
 import { InlineTextField } from "app/core/components/InlineTextField"
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
@@ -25,7 +26,7 @@ const Home: BlitzPage = () => {
           schema={DDMCoordinate}
           submitText="Save"
         >
-          <CoordinateFields />
+          <CoordinateFields name="coordinate" label="label" />
         </Form>
       </main>
 
