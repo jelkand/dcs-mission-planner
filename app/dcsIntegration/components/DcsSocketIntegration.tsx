@@ -13,7 +13,13 @@ export const DcsSocketIntegration = () => {
   const [socketUrl, setSocketUrl] = useState(DCS_SOCKET)
   const messageHistory: MutableRefObject<any> = useRef([])
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl)
+  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+    shouldReconnect: (event) => {
+      console.log(event)
+      return true
+    },
+    reconnectInterval: 10000,
+  })
 
   messageHistory.current = useMemo(
     () => messageHistory?.current?.concat(lastMessage),
