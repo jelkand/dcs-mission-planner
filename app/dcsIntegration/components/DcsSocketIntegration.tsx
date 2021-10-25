@@ -19,6 +19,7 @@ export const DcsSocketIntegration = () => {
       return true
     },
     reconnectInterval: 10000,
+    protocols: "echo",
   })
 
   messageHistory.current = useMemo(
