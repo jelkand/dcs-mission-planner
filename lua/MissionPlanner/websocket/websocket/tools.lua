@@ -1,4 +1,4 @@
-local bit = require'bit'
+local bit = require'bit.numberlua'
 local mime = require'mime'
 local rol = bit.rol
 local bxor = bit.bxor
