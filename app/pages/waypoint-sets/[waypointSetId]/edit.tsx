@@ -41,7 +41,7 @@ export const EditWaypointSet = () => {
                 id: waypointSet.id,
                 ...values,
               })
-              await setQueryData(updated)
+              // await setQueryData(updated)
               router.push(Routes.ShowWaypointSetPage({ waypointSetId: updated.id }))
             } catch (error: any) {
               console.error(error)
