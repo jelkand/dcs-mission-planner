@@ -1,8 +1,10 @@
+import { Heading } from "@chakra-ui/layout"
+import { Button, ButtonGroup, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
 import Layout from "app/core/layouts/Layout"
 import deleteWaypointSet from "app/waypoint-sets/mutations/deleteWaypointSet"
 import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
 import { BlitzPage, Head, Link, Routes, useMutation, useParam, useQuery, useRouter } from "blitz"
-import { Suspense } from "react"
+import React, { Suspense } from "react"
 
 export const WaypointSet = () => {
   const router = useRouter()
@@ -13,29 +15,55 @@ export const WaypointSet = () => {
   return (
     <>
       <Head>
-        <title>WaypointSet {waypointSet.id}</title>
+        <title>{waypointSet.name}</title>
       </Head>
 
       <div>
-        <h1>WaypointSet {waypointSet.id}</h1>
-        <pre>{JSON.stringify(waypointSet, null, 2)}</pre>
+        <Heading>{waypointSet.name}</Heading>
 
-        <Link href={Routes.EditWaypointSetPage({ waypointSetId: waypointSet.id })}>
-          <a>Edit</a>
-        </Link>
+        <Table variant="simple">
+          <Thead>
+            <Tr>
+              <Th>Index</Th>
+              <Th>Waypoint</Th>
+              <Th>Latitude</Th>
+              <Th>Longitude</Th>
+              <Th>Elevation</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {waypointSet.waypoints.map(({ id, waypoint, elementOrder }) => (
+              <Tr key={id}>
+                <Td>{elementOrder}</Td>
+                <Td>{waypoint.name}</Td>
+                <Td>{waypoint.coordinate.latitude}</Td>
+                <Td>{waypoint.coordinate.longitude}</Td>
+                <Td>
+                  {waypoint.coordinate.elevation} {waypoint.coordinate.elevationUnit}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
 
-        <button
-          type="button"
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deleteWaypointSetMutation({ id: waypointSet.id })
-              router.push(Routes.WaypointSetsPage())
-            }
-          }}
-          style={{ marginLeft: "0.5rem" }}
-        >
-          Delete
-        </button>
+        <ButtonGroup variant="simple" spacing="6">
+          <Button>
+            <Link href={Routes.EditWaypointSetPage({ waypointSetId: waypointSet.id })}>Edit</Link>
+          </Button>
+          <Button
+            onClick={async () => {
+              if (window.confirm("This will be deleted")) {
+                await deleteWaypointSetMutation({ id: waypointSet.id })
+                router.push(Routes.WaypointSetsPage())
+              }
+            }}
+            colorScheme="red"
+          >
+            Delete
+          </Button>
+
+          <Button>Enter to Jet</Button>
+        </ButtonGroup>
       </div>
     </>
   )

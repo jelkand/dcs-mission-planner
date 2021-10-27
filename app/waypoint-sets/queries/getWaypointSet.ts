@@ -12,7 +12,16 @@ export default resolver.pipe(
   // resolver.authorize(),
   async ({ id }) => {
     // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-    const waypointSet = await db.waypointSet.findFirst({ where: { id } })
+    const waypointSet = await db.waypointSet.findFirst({
+      where: { id },
+      include: {
+        waypoints: {
+          include: {
+            waypoint: { include: { coordinate: true } },
+          },
+        },
+      },
+    })
 
     if (!waypointSet) throw new NotFoundError()
 
