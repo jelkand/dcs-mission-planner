@@ -13,7 +13,7 @@ export const DcsSocketIntegration = () => {
   const [socketUrl, setSocketUrl] = useState(DCS_SOCKET)
   const messageHistory: MutableRefObject<any> = useRef([])
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
+  const { sendJsonMessage, lastMessage, readyState } = useWebSocket(socketUrl, {
     shouldReconnect: (event) => {
       console.log(event)
       return true
@@ -27,7 +27,7 @@ export const DcsSocketIntegration = () => {
     [lastMessage]
   )
 
-  const handleClickSendMessage = useCallback(() => sendMessage("Ping"), [])
+  const handleClickSendMessage = useCallback(() => sendJsonMessage({ name: "Ping" }), [])
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
