@@ -8,7 +8,6 @@ interface DDM {
   direction: Direction
   degrees: number
   minutes: number
-  decimalMinutes: number
 }
 
 interface DDMLatitude extends DDM {
@@ -35,16 +34,16 @@ export const decimalValueToDDM = (decimalDegrees: number, isNorthing: boolean): 
   const degrees = Math.trunc(degreesMagnitude)
   const minutes = (degreesMagnitude % 1) * 60
 
-  const wholeMinutes = Math.trunc(minutes)
-
-  const decimalMinutes = Math.trunc(Math.round((minutes % 1) * 10000))
-
   return {
     direction: degreesDirection,
     degrees,
-    minutes: wholeMinutes,
-    decimalMinutes,
+    minutes,
   }
+}
+
+export const decimalValueToDDMString = (decimalDegrees: number, isNorthing: boolean): string => {
+  const { direction, degrees, minutes } = decimalValueToDDM(decimalDegrees, isNorthing)
+  return `${direction} ${degrees}° ${minutes.toFixed(4).padStart(7, "0")}`
 }
 
 export const toDDM = ({
@@ -57,8 +56,8 @@ export const toDDM = ({
   return { latitude, longitude }
 }
 
-export const ddmToDecimalValue = ({ direction, degrees, minutes, decimalMinutes }: DDM): number => {
+export const ddmToDecimalValue = ({ direction, degrees, minutes }: DDM): number => {
   const directionCoefficient = positiveDirections.has(direction) ? 1 : -1
-  const decimal = (minutes + decimalMinutes / 10000) / 60
+  const decimal = minutes / 60
   return directionCoefficient * (degrees + decimal)
 }
