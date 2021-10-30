@@ -112,7 +112,7 @@ model Coordinate {
   updatedAt     DateTime      @updatedAt
   latitude      Float
   longitude     Float
-  elevation     Int
+  elevation     Float
   elevationUnit ElevationUnit @default(FEET)
   waypoint      Waypoint[]
 }
