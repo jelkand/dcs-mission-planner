@@ -81,7 +81,7 @@ const WaypointSetsPage: BlitzPage = () => {
 
           <Button>
             <AddIcon marginRight="2" />
-            <Link href={Routes.NewWaypointSetFromFilePage()}>
+            <Link href={Routes.NewWaypointSetFromCombatFlitePage()}>
               <a>Create New From CombatFlite</a>
             </Link>
           </Button>
