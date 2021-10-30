@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/button"
+import { Button, ButtonGroup } from "@chakra-ui/button"
 import { AddIcon } from "@chakra-ui/icons"
 import { Box, Heading } from "@chakra-ui/layout"
 import { Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
@@ -71,12 +71,21 @@ const WaypointSetsPage: BlitzPage = () => {
 
       <Box>
         <Heading marginBottom="6">Waypoint Sets</Heading>
-        <Button>
-          <AddIcon marginRight="2" />
-          <Link href={Routes.NewWaypointSetPage()}>
-            <a>Create New</a>
-          </Link>
-        </Button>
+        <ButtonGroup>
+          <Button disabled>
+            <AddIcon marginRight="2" />
+            <Link href={Routes.NewWaypointSetPage()}>
+              <a>Create New</a>
+            </Link>
+          </Button>
+
+          <Button>
+            <AddIcon marginRight="2" />
+            <Link href={Routes.NewWaypointSetFromFilePage()}>
+              <a>Create New From CombatFlite</a>
+            </Link>
+          </Button>
+        </ButtonGroup>
 
         <Suspense fallback={<Box>Loading...</Box>}>
           <WaypointSetsList />

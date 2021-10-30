@@ -38,6 +38,7 @@ export const FileField = forwardRef<HTMLInputElement, LabeledTextFieldProps>(
               {...input}
               value={value[0]?.name || placeholder}
               onClick={() => uploadButtonRef?.current?.click()}
+              readOnly
             ></Input>
             <input
               hidden

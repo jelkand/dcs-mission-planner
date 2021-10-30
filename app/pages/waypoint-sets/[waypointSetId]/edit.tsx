@@ -34,7 +34,7 @@ export const EditWaypointSet = () => {
           //  - Tip: extract mutation's schema into a shared `validations.ts` file and
           //         then import and use it here
           // schema={UpdateWaypointSet}
-          initialValues={waypointSet}
+          // initialValues={waypointSet}
           onSubmit={async (values) => {
             try {
               const updated = await updateWaypointSetMutation({

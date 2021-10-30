@@ -6,7 +6,7 @@ import { Direction } from "./Direction"
 export const Coordinate = z.object({
   latitude: z.number().gte(-90).lte(90),
   longitude: z.number().gte(-180).lte(180),
-  elevation: z.number().int(),
+  elevation: z.number(), // todo refactor to int
   elevationUnit: z.nativeEnum(ElevationUnit),
 })
 

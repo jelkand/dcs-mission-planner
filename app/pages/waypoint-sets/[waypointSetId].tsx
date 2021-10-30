@@ -1,6 +1,7 @@
 import { Heading } from "@chakra-ui/layout"
-import { Button, ButtonGroup, Table, Tbody, Td, Th, Thead, Tr } from "@chakra-ui/react"
+import { Button, ButtonGroup } from "@chakra-ui/react"
 import Layout from "app/core/layouts/Layout"
+import { WaypointTable } from "app/waypoint-sets/components/WaypointTable"
 import deleteWaypointSet from "app/waypoint-sets/mutations/deleteWaypointSet"
 import getWaypointSet from "app/waypoint-sets/queries/getWaypointSet"
 import { BlitzPage, Head, Link, Routes, useMutation, useParam, useQuery, useRouter } from "blitz"
@@ -21,36 +22,15 @@ export const WaypointSet = () => {
       <div>
         <Heading>{waypointSet.name}</Heading>
 
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Index</Th>
-              <Th>Waypoint</Th>
-              <Th>Latitude</Th>
-              <Th>Longitude</Th>
-              <Th>Elevation</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {waypointSet.waypoints.map(({ id, waypoint, elementOrder }) => (
-              <Tr key={id}>
-                <Td>{elementOrder}</Td>
-                <Td>{waypoint.name}</Td>
-                <Td>{waypoint.coordinate.latitude}</Td>
-                <Td>{waypoint.coordinate.longitude}</Td>
-                <Td>
-                  {waypoint.coordinate.elevation} {waypoint.coordinate.elevationUnit}
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
+        <WaypointTable waypoints={waypointSet.waypoints} />
+
+        <br />
 
         <ButtonGroup variant="simple" spacing="6">
-          <Button>
+          {/* <Button>
             <Link href={Routes.EditWaypointSetPage({ waypointSetId: waypointSet.id })}>Edit</Link>
-          </Button>
-          <Button
+          </Button> */}
+          {/* <Button
             onClick={async () => {
               if (window.confirm("This will be deleted")) {
                 await deleteWaypointSetMutation({ id: waypointSet.id })
@@ -60,9 +40,9 @@ export const WaypointSet = () => {
             colorScheme="red"
           >
             Delete
-          </Button>
+          </Button> */}
 
-          <Button>Enter to Jet</Button>
+          <Button variant="solid">Enter to Jet</Button>
         </ButtonGroup>
       </div>
     </>

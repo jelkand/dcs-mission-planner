@@ -5,7 +5,7 @@ import {
   WaypointSetFromFileForm,
 } from "app/waypoint-sets/components/WaypointSetFromFileForm"
 import createWaypointSet from "app/waypoint-sets/mutations/createWaypointSet"
-import { CombatFliteSchema } from "app/waypoint-sets/transformers"
+// import { CombatFliteSchema } from "app/waypoint-sets/transformers"
 import { NewWaypointSet } from "app/waypoint-sets/validations"
 import { BlitzPage, Link, Routes, useMutation, useRouter } from "blitz"
 import parser from "fast-xml-parser"

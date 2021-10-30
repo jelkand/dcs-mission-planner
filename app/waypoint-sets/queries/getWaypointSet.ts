@@ -16,6 +16,7 @@ export default resolver.pipe(
       where: { id },
       include: {
         waypoints: {
+          orderBy: { elementOrder: "asc" },
           include: {
             waypoint: { include: { coordinate: true } },
           },

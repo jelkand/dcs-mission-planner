@@ -18,6 +18,4 @@ export const CombatFliteSchema = z.object({
   }),
 })
 
-export const combatFliteToWaypointSet = (combatFliteJson: z.infer<typeof CombatFliteSchema>) => ({})
-
-export const parseCombatFliteXML = (xmlString: string) => {}
+export type CombatFlite = z.infer<typeof CombatFliteSchema>
