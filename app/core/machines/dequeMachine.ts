@@ -1,4 +1,4 @@
-import { assign, createMachine, send } from "xstate"
+import { assign, createMachine, send, sendParent } from "xstate"
 
 const DCS_SOCKET = `${process.env.BLITZ_PUBLIC_DCS_SOCKET_HOST}:${process.env.BLITZ_PUBLIC_DCS_SOCKET_PORT}`
 
@@ -49,6 +49,7 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
     states: {
       initializing: {
         on: { ...pushOrUnshiftActions, DCS_SOCKET_CONNECTED: "checkingDeque" },
+        exit: sendParent({ type: "INITIALIZED" }),
       },
       idle: {
         on: {
@@ -86,7 +87,6 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
     },
     services: {
       dcsSocketCallback: (ctx, event) => (callback, onReceive) => {
-        console.log("setting up socket")
         const dcsSocket = new WebSocket(DCS_SOCKET, "json")
 
         // for now don't care about response
