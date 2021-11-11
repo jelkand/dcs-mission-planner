@@ -2,26 +2,43 @@ import { interpret } from "xstate"
 
 import { dequeMachine } from "./dequeMachine"
 
-it.skip("should contact the server", async () => {
-  const dequeService = interpret(dequeMachine).onTransition((state) => {
-    console.log({ state: state.value })
-    if (state.matches("checkingDeque") || state.matches("idle")) {
-      console.log("can accept")
-    }
+const socket = jest.fn()
+const handler = jest.fn()
+const notifier = jest.fn()
+const mockedDequeMachine = dequeMachine.withConfig({
+  services: {
+    dcsSocketCallback: () => socket,
+  },
+  actions: {
+    notifyInitialized: notifier,
+    handleFirstInDeque: handler,
+  },
+})
+describe("DequeMachine", () => {
+  it("should initialize and process an item", async () => {
+    const dequeService = interpret(mockedDequeMachine).onTransition((state, event) => {
+      if (event.type === "DCS_SOCKET_CONNECTED") {
+        expect(notifier).toHaveBeenCalled()
+        expect(state.value).toBe("idle")
+        expect(socket).toHaveBeenCalled()
+      }
+      if (state.matches("handlingItem")) {
+        expect(handler).toHaveBeenCalled()
+      }
+    })
+
+    dequeService.start()
+    dequeService.send({ type: "DCS_SOCKET_CONNECTED" })
+    dequeService.send({
+      type: "PUSH_ITEM",
+      items: [
+        {
+          type: "SEND_MESSAGE",
+          message: { action: "input", payload: { deviceId: 0, inputId: 0, value: 0 } },
+          delay: 0,
+        },
+      ],
+    })
+    dequeService.send("ITEM_HANDLED")
   })
-
-  dequeService.start()
-  // dequeService.send({
-  //   type: "PUSH_ITEM",
-  //   items: [
-  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
-  //   ],
-  // })
-
-  await new Promise((resolve) => setTimeout(resolve, 2000))
-  // done()
 })

@@ -52,7 +52,7 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
     states: {
       initializing: {
         on: { ...pushOrUnshiftActions, DCS_SOCKET_CONNECTED: "checkingDeque" },
-        exit: sendParent({ type: "INITIALIZED" }),
+        exit: "notifyInitialized",
       },
       idle: {
         on: {
@@ -123,6 +123,7 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
         },
     },
     actions: {
+      notifyInitialized: sendParent({ type: "INITIALIZED" }),
       handleFirstInDeque: send(({ deque }) => deque[0]!, {
         to: "dcsSocket",
         delay: ({ deque }) => deque[0]?.delay || 0,
