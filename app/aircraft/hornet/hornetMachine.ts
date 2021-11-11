@@ -1,11 +1,21 @@
 import { dequeMachine } from "app/core/machines/dequeMachine"
-import { Actor, ActorRefFrom, assign, createMachine, send, spawn } from "xstate"
+import { ActorRefFrom, assign, createMachine, send, spawn } from "xstate"
+
+import { enterSeq, HornetKey, nextWyptSeq, onOffInputReducer, startKeySeq } from "./inputs"
 
 export interface HornetMachineContext {
-  dequeRef?: any //  ActorRefFrom<typeof dequeMachine>
-  inputPlan?: {
-    waypoints: Array<any>
+  dequeRef: ActorRefFrom<typeof dequeMachine>
+  inputPlan: {
+    waypoints: Array<RawWaypoint>
   }
+  currentWaypoint: number
+}
+
+interface RawWaypoint {
+  latitude: Array<HornetKey>
+  longitude: Array<HornetKey>
+  elementOrder?: number
+  flag?: any // bulls etc
 }
 
 interface HornetItem {
@@ -33,10 +43,6 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   {
     id: "hornetMachine",
     initial: "initializing",
-    context: {
-      // inputPlan: undefined,
-      // dequeRef: undefined,
-    },
     entry: assign({
       dequeRef: () => spawn(dequeMachine, "deque"),
     }),
@@ -47,25 +53,33 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
         },
       },
       idle: {
-        on: { START: "setupWaypointEntry" },
-      },
-      setupWaypointEntry: {
-        entry: "setCockpitForWaypointEntry",
-        on: { READY_FOR_WAYPOINTS: "waypointEntry", STOP: "idle" },
+        on: { START: "waypointEntry" },
       },
       waypointEntry: {
-        initial: "incrementWaypoint",
+        entry: "setCockpitForWaypointEntry",
+        initial: "inputWaypoint",
         on: {
           WAYPOINT_ENTRY_COMPLETE: "idle",
           STOP: "idle",
         },
         states: {
-          incrementWaypoint: { always: "inputWaypoint" },
           inputWaypoint: {
             always: [
-              { target: "incrementWaypoint", cond: "hasMoreWaypoints" },
-              // { target: "complete" },
+              {
+                target: "incrementWaypoint",
+                cond: "hasMoreWaypoints",
+                actions: "inputNextWaypoint",
+              },
+              { target: "complete" },
             ],
+          },
+          incrementWaypoint: {
+            entry: "incrementAMPCDWaypoint",
+            always: "inputWaypoint",
+            exit: "incrementWaypointCounter",
+          },
+          complete: {
+            type: "final",
           },
         },
       },
@@ -76,16 +90,37 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
       setCockpitForWaypointEntry: send(
         {
           type: "PUSH_ITEM",
-          items: [
-            { type: "SEND_MESSAGE", payload: { device: 37, input: 3018, value: 0 }, delay: 200 },
-            { type: "SEND_MESSAGE", payload: { device: 37, input: 3018, value: 0 }, delay: 200 },
-            { type: "SEND_MESSAGE", payload: { device: 37, input: 3018, value: 0 }, delay: 200 },
-            { type: "SEND_MESSAGE", payload: { device: 37, input: 3018, value: 0 }, delay: 200 },
-            { type: "SEND_MESSAGE", payload: { device: 37, input: 3018, value: 0 }, delay: 200 },
-          ],
+          items: startKeySeq.reduce(onOffInputReducer, []),
         },
         { to: "deque" }
       ),
+      inputNextWaypoint: send(
+        ({ inputPlan, currentWaypoint }) => {
+          console.log({ currentWaypoint })
+          const { latitude, longitude } = inputPlan.waypoints[currentWaypoint]!
+          const keySequence = [...latitude, ...enterSeq, ...longitude]
+          console.log({ keySequence })
+          return {
+            type: "PUSH_ITEM",
+            items: keySequence.reduce(onOffInputReducer, []),
+          }
+        },
+        { to: "deque" }
+      ),
+      incrementAMPCDWaypoint: send(
+        {
+          type: "PUSH_ITEM",
+          items: nextWyptSeq.reduce(onOffInputReducer, []),
+        },
+        { to: "deque" }
+      ),
+      incrementWaypointCounter: assign(({ currentWaypoint }) => ({
+        currentWaypoint: currentWaypoint + 1,
+      })),
+    },
+    guards: {
+      hasMoreWaypoints: ({ inputPlan, currentWaypoint }) =>
+        currentWaypoint < inputPlan.waypoints.length,
     },
   }
 )

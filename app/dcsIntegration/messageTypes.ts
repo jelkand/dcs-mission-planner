@@ -1,10 +1,11 @@
-export type Message = InputMessage | ReadStateMessage | LuaCommandMessage
+export type DCSMessage = InputMessage | ReadStateMessage | LuaCommandMessage
 
 export interface InputMessage {
   action: "input"
   payload: {
     deviceId: number
     inputId: number
+    value: number
   }
 }
 

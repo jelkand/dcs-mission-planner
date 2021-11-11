@@ -1,4 +1,5 @@
-import { assign, createMachine, send, sendParent } from "xstate"
+import { DCSMessage } from "app/dcsIntegration/messageTypes"
+import { assign, createMachine, InvokeCallback, send, sendParent } from "xstate"
 
 const DCS_SOCKET = `${process.env.BLITZ_PUBLIC_DCS_SOCKET_HOST}:${process.env.BLITZ_PUBLIC_DCS_SOCKET_PORT}`
 
@@ -7,9 +8,11 @@ export interface DequeMachineContext {
   socketRef?: any
 }
 
-interface DequeItem {
-  type: string
-  payload: any
+type DequeItem = SendMessage
+
+export type SendMessage = {
+  type: "SEND_MESSAGE"
+  message: DCSMessage
   delay?: number
 }
 
@@ -24,7 +27,7 @@ export type DequeMachineEvent =
     }
   | { type: "DCS_SOCKET_CONNECTED" }
   | { type: "ITEM_HANDLED" }
-// | { type: "SEND_MESSAGE" }
+  | SendMessage
 
 const pushOrUnshiftActions = {
   PUSH_ITEM: {
@@ -86,46 +89,44 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
       dequeHasItems: ({ deque }) => deque.length > 0,
     },
     services: {
-      dcsSocketCallback: (ctx, event) => (callback, onReceive) => {
-        const dcsSocket = new WebSocket(DCS_SOCKET, "json")
+      dcsSocketCallback:
+        (ctx, event): InvokeCallback<DequeMachineEvent, any> =>
+        (callback, onReceive) => {
+          const dcsSocket = new WebSocket(DCS_SOCKET, "json")
 
-        // for now don't care about response
-        // dcsSocket.onmessage = (data) => callback({ type: "MESSAGE_RECEIVED", response: data })
+          // for now don't care about response
+          // dcsSocket.onmessage = (data) => callback({ type: "MESSAGE_RECEIVED", response: data })
 
-        dcsSocket.onopen = (data) => {
-          callback({ type: "DCS_SOCKET_CONNECTED" })
-        }
-
-        // for now don't care about errors or closing
-        // dcsSocket.onerror = (data) => {
-        //   console.log("error", { data })
-        // }
-
-        // dcsSocket.onclose = (data) => {
-        //   callback("DCS_SOCKET_CLOSED")
-        // }
-
-        onReceive((event) => {
-          console.log("got event", { event })
-          if (event.type === "SEND_MESSAGE") {
-            dcsSocket.send(JSON.stringify(event.message))
-            callback({ type: "ITEM_HANDLED" })
+          dcsSocket.onopen = () => {
+            callback({ type: "DCS_SOCKET_CONNECTED" })
           }
-        })
 
-        return () => {
-          dcsSocket.close()
-        }
-      },
+          // for now don't care about errors or closing
+          // dcsSocket.onerror = (data) => {
+          //   console.log("error", { data })
+          // }
+
+          // dcsSocket.onclose = (data) => {
+          //   callback("DCS_SOCKET_CLOSED")
+          // }
+
+          onReceive((event) => {
+            if (event.type === "SEND_MESSAGE") {
+              dcsSocket.send(JSON.stringify(event.message))
+              callback({ type: "ITEM_HANDLED" })
+            }
+          })
+
+          return () => {
+            dcsSocket.close()
+          }
+        },
     },
     actions: {
-      handleFirstInDeque: send(
-        ({ deque }) => {
-          const firstItem = deque[0]
-          return { type: "SEND_MESSAGE", message: firstItem?.payload }
-        },
-        { to: "dcsSocket", delay: ({ deque }) => deque[0]?.delay || 0 }
-      ),
+      handleFirstInDeque: send(({ deque }) => deque[0]!, {
+        to: "dcsSocket",
+        delay: ({ deque }) => deque[0]?.delay || 0,
+      }),
       shiftItem: assign((context) => {
         const [, ...deque] = context.deque
         return {
