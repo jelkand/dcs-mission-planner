@@ -2,8 +2,12 @@ import { interpret } from "xstate"
 
 import { hornetMachine, HornetMachineContext } from "./hornetMachine"
 
-it("should contact the server", async () => {
-  const configuredHornetMachine = hornetMachine.withContext({
+const mockSpawnDeque = jest.fn()
+const mockSetCockpitForWaypointEntry = jest.fn()
+const mockInputNextWaypoint = jest.fn()
+const mockIncrementAMPCDWaypoint = jest.fn()
+const configuredHornetMachine = hornetMachine
+  .withContext({
     ...hornetMachine.context,
     currentWaypoint: 0,
     inputPlan: {
@@ -14,27 +18,27 @@ it("should contact the server", async () => {
       ],
     },
   })
-  const hornetService = interpret(configuredHornetMachine).onTransition((state, event) => {
-    console.log({ state: state.value })
-    // console.log({ context: state.context })
-    // console.log({ event })
-    if (state.matches("idle")) {
-      hornetService.send({ type: "START" })
-    }
+  .withConfig({
+    actions: {
+      spawnDeque: mockSpawnDeque,
+      setCockpitForWaypointEntry: mockSetCockpitForWaypointEntry,
+      inputNextWaypoint: mockInputNextWaypoint,
+      incrementAMPCDWaypoint: mockIncrementAMPCDWaypoint,
+    },
   })
+describe("HornetMachine ", () => {
+  it("should set up waypoints", async () => {
+    const hornetService = interpret(configuredHornetMachine)
 
-  hornetService.start()
-  // hornetService.send({
-  //   type: "PUSH_ITEM",
-  //   items: [
-  //     { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-  //     { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-  //   ],
-  // })
-
-  await new Promise((resolve) => setTimeout(resolve, 5000))
-  // done()
+    hornetService.start()
+    expect(hornetService.state.value).toBe("initializing")
+    expect(mockSpawnDeque).toHaveBeenCalled()
+    hornetService.send("INITIALIZED")
+    expect(hornetService.state.value).toBe("idle")
+    hornetService.send("START")
+    expect(hornetService.state.context.currentWaypoint).toBe(3)
+    expect(hornetService.state.value).toBe("idle")
+    expect(mockInputNextWaypoint).toBeCalledTimes(3)
+    expect(mockIncrementAMPCDWaypoint).toBeCalledTimes(3)
+  })
 })

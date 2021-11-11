@@ -18,12 +18,6 @@ interface RawWaypoint {
   flag?: any // bulls etc
 }
 
-interface HornetItem {
-  type: string
-  payload: any
-  delay?: number
-}
-
 export type HornetMachineEvent =
   | {
       type: "INITIALIZED"
@@ -43,9 +37,7 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   {
     id: "hornetMachine",
     initial: "initializing",
-    entry: assign({
-      dequeRef: () => spawn(dequeMachine, "deque"),
-    }),
+    entry: "spawnDeque",
     states: {
       initializing: {
         on: {
@@ -80,6 +72,7 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
           },
           complete: {
             type: "final",
+            entry: send("WAYPOINT_ENTRY_COMPLETE"),
           },
         },
       },
@@ -87,6 +80,9 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   },
   {
     actions: {
+      spawnDeque: assign({
+        dequeRef: () => spawn(dequeMachine, "deque"),
+      }),
       setCockpitForWaypointEntry: send(
         {
           type: "PUSH_ITEM",
@@ -96,10 +92,8 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
       ),
       inputNextWaypoint: send(
         ({ inputPlan, currentWaypoint }) => {
-          console.log({ currentWaypoint })
           const { latitude, longitude } = inputPlan.waypoints[currentWaypoint]!
           const keySequence = [...latitude, ...enterSeq, ...longitude]
-          console.log({ keySequence })
           return {
             type: "PUSH_ITEM",
             items: keySequence.reduce(onOffInputReducer, []),
