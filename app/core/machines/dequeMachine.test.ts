@@ -11,16 +11,16 @@ it.skip("should contact the server", async () => {
   })
 
   dequeService.start()
-  dequeService.send({
-    type: "PUSH_ITEM",
-    items: [
-      { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-      { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-      { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-      { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-      { type: "SEND_MESSAGE", payload: "ping", delay: 1500 },
-    ],
-  })
+  // dequeService.send({
+  //   type: "PUSH_ITEM",
+  //   items: [
+  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
+  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
+  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
+  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
+  //     { type: "SEND_MESSAGE", message: pay"ping", delay: 1500 },
+  //   ],
+  // })
 
   await new Promise((resolve) => setTimeout(resolve, 2000))
   // done()
