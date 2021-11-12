@@ -8,6 +8,7 @@ package.path  = package.path..";"..lfs.writedir().."Scripts\\MissionPlanner\\cop
 
 local copas = require'copas'
 
+local JSON = assert(loadfile "Scripts\\JSON.lua")()
 
 
 local missionPlanner = {
@@ -55,6 +56,20 @@ local function echo_protocol(ws)
   end
 end
 
+local function json_protocol(ws)
+  missionPlanner.log("got json client")
+  while true do
+    local message = ws:receive()
+    if message then
+      local decodedMessage = JSON:decode(message)
+      missionPlanner.log("Prettified: " .. JSON:encode_pretty(decodedMessage))
+    else
+      ws:close()
+      return
+    end
+  end
+end
+
 missionPlanner.insert = {
   Start = function(self)
     missionPlanner.server = require'websocket'.server.copas.listen
@@ -68,6 +83,7 @@ missionPlanner.insert = {
         -- this callback is called, whenever a new client connects.
         -- ws is a new websocket instance
         echo = echo_protocol,
+        json = json_protocol,
         default = echo_protocol
       },
       on_error = function(err)
@@ -94,7 +110,7 @@ do
     missionPlanner.insert:Start()
 		if OtherLuaExportStart then
 			OtherLuaExportStart()
-		end		
+		end
 	end
 end
 do
@@ -112,6 +128,6 @@ do
     missionPlanner.insert:Stop()
 		if OtherLuaExportStop then
 			OtherLuaExportStop()
-		end						
+		end
 	end
 end
