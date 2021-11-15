@@ -1,84 +1,125 @@
-/* This is the first pass at building a machine to 'promisify' a socket
- * Keeping it around for future reference.
- */
-
-import { createMachine, forwardTo, sendUpdate } from "xstate"
-import { send } from "xstate"
+import { DCSMessage } from "app/dcsIntegration/messageTypes"
+import { assign, createMachine, forwardTo, InvokeCallback, send, sendParent } from "xstate"
 
 const DCS_SOCKET = `${process.env.BLITZ_PUBLIC_DCS_SOCKET_HOST}:${process.env.BLITZ_PUBLIC_DCS_SOCKET_PORT}`
 
-export interface SocketMachineContext {}
+export interface SocketMachineContext {
+  maxRetries: number
+  currentRetries: number
+  retryInterval: number
+}
 
-interface SocketMachine {
-  action: string
+export type SendMessage = {
+  type: "SEND_MESSAGE"
+  message: DCSMessage
+  delay?: number
 }
 
 export type SocketMachineEvent =
   | {
-      type: "SEND_MESSAGE"
-      message: any
+      type: "DCS_SOCKET_CLOSED"
+    }
+  | {
+      type: "ATTEMPT_CONNECTION"
     }
   | { type: "DCS_SOCKET_CONNECTED" }
   | { type: "MESSAGE_RECEIVED"; response: any }
-  | { type: "ERROR_RECEIVED" }
-  | { type: "DCS_SOCKET_CLOSED" }
+  | SendMessage
 
 export const socketMachine = createMachine<SocketMachineContext, SocketMachineEvent>(
   {
     id: "socket",
-    initial: "idle",
-    invoke: {
-      id: "dcsSocket",
-      src: "dcsSocketCallback",
+    initial: "open",
+    context: {
+      maxRetries: 12,
+      currentRetries: 0,
+      retryInterval: 5000,
+    },
+    on: {
+      DCS_SOCKET_CLOSED: "closed",
     },
     states: {
-      idle: {
-        on: { DCS_SOCKET_CONNECTED: "ready" },
-      },
-      ready: {
-        on: { SEND_MESSAGE: { target: "waiting", actions: forwardTo("dcsSocket") } },
-      },
-      waiting: {
-        on: {
-          MESSAGE_RECEIVED: {
-            target: "ready",
-            actions: sendUpdate(),
+      open: {
+        initial: "initializing",
+        invoke: {
+          id: "dcsSocket",
+          src: "dcsSocketCallback",
+        },
+        states: {
+          initializing: {
+            on: { DCS_SOCKET_CONNECTED: "ready" },
+            exit: "notifyInitialized",
           },
-          ERROR_RECEIVED: "error",
+          ready: {
+            on: {
+              SEND_MESSAGE: { actions: "forwardToSocket" },
+              MESSAGE_RECEIVED: { actions: "sendToParent" },
+            },
+          },
         },
       },
-      error: {},
+      closed: {
+        always: [{ target: "retryingConnection", cond: "hasNotExceededRetries" }],
+        on: {
+          ATTEMPT_CONNECTION: "open",
+        },
+      },
+      retryingConnection: {
+        after: [
+          {
+            delay: ({ retryInterval }) => retryInterval,
+            target: "open",
+          },
+        ],
+        entry: assign({
+          currentRetries: ({ currentRetries }) => currentRetries + 1,
+        }),
+      },
     },
   },
   {
+    guards: {
+      hasNotExceededRetries: ({ maxRetries, currentRetries }) => currentRetries < maxRetries,
+    },
     services: {
-      dcsSocketCallback: (src, event) => (callback, onReceive) => {
-        const dcsSocket = new WebSocket(DCS_SOCKET, "json")
+      dcsSocketCallback:
+        (ctx, event): InvokeCallback<SocketMachineEvent, SocketMachineEvent> =>
+        (callback, onReceive) => {
+          const dcsSocket = new WebSocket(DCS_SOCKET, "json")
 
-        dcsSocket.onmessage = (data) => callback({ type: "MESSAGE_RECEIVED", response: data })
-
-        dcsSocket.onopen = (data) => {
-          callback({ type: "DCS_SOCKET_CONNECTED" })
-        }
-
-        dcsSocket.onerror = (data) => {
-          console.log("error", { data })
-        }
-
-        dcsSocket.onclose = (data) => {
-          callback("DCS_SOCKET_CLOSED")
-        }
-
-        onReceive((event) => {
-          if (event.type === "SEND_MESSAGE") {
-            dcsSocket.send(JSON.stringify(event.message))
+          dcsSocket.onmessage = (data) => {
+            console.log("got message", data)
+            callback({ type: "MESSAGE_RECEIVED", response: data })
           }
-        })
 
-        return () => {
-          dcsSocket.close()
-        }
-      },
+          dcsSocket.onopen = () => {
+            callback({ type: "DCS_SOCKET_CONNECTED" })
+          }
+
+          // for now don't care about errors or closing
+          dcsSocket.onerror = (data) => {
+            console.log("error", { data })
+          }
+
+          dcsSocket.onclose = (data) => {
+            callback("DCS_SOCKET_CLOSED")
+          }
+
+          onReceive((event) => {
+            if (event.type === "SEND_MESSAGE") {
+              dcsSocket.send(JSON.stringify(event.message))
+            }
+          })
+
+          return () => {
+            dcsSocket.close()
+          }
+        },
+    },
+    actions: {
+      notifyInitialized: sendParent({ type: "INITIALIZED" }),
+      forwardToSocket: forwardTo("dcsSocket"),
+      sendToParent: sendParent({ type: "MESSAGE_RECEIVED" }),
     },
   }
 )
