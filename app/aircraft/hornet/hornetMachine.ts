@@ -1,10 +1,9 @@
 import { dequeMachine } from "app/core/machines/dequeMachine"
-import { ActorRefFrom, assign, createMachine, send, spawn } from "xstate"
+import { ActorRefFrom, assign, createMachine, send, sendParent, spawn } from "xstate"
 
 import { enterSeq, HornetKey, nextWyptSeq, onOffInputReducer, startKeySeq } from "./inputs"
 
 export interface HornetMachineContext {
-  dequeRef: ActorRefFrom<typeof dequeMachine>
   inputPlan: {
     waypoints: Array<RawWaypoint>
   }
@@ -31,29 +30,29 @@ export type HornetMachineEvent =
   | {
       type: "READY_FOR_WAYPOINTS"
     }
-  | { type: "WAYPOINT_ENTRY_COMPLETE" }
+  | {
+      type: "SET_WAYPOINTS"
+      waypoints: Array<RawWaypoint>
+    }
 
 export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEvent>(
   {
     id: "hornetMachine",
-    initial: "initializing",
-    entry: "spawnDeque",
+    initial: "idle",
     states: {
-      initializing: {
-        on: {
-          INITIALIZED: "idle",
-        },
-      },
       idle: {
-        on: { START: "waypointEntry" },
+        on: {
+          SET_WAYPOINTS: { actions: "setWaypoints" },
+          START: { target: "waypointEntry", cond: "hasWaypoints" },
+        },
       },
       waypointEntry: {
         entry: "setCockpitForWaypointEntry",
         initial: "inputWaypoint",
         on: {
-          WAYPOINT_ENTRY_COMPLETE: "idle",
           STOP: "idle",
         },
+        onDone: "idle",
         states: {
           inputWaypoint: {
             always: [
@@ -72,7 +71,6 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
           },
           complete: {
             type: "final",
-            entry: send("WAYPOINT_ENTRY_COMPLETE"),
           },
         },
       },
@@ -80,34 +78,30 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   },
   {
     actions: {
-      spawnDeque: assign({
-        dequeRef: () => spawn(dequeMachine, "deque"),
+      setWaypoints: assign((_, event) => {
+        if (event.type !== "SET_WAYPOINTS") return {}
+        return {
+          inputPlan: {
+            waypoints: event.waypoints,
+          },
+        }
       }),
-      setCockpitForWaypointEntry: send(
-        {
+      setCockpitForWaypointEntry: sendParent({
+        type: "PUSH_ITEM",
+        items: startKeySeq.reduce(onOffInputReducer, []),
+      }),
+      inputNextWaypoint: sendParent(({ inputPlan, currentWaypoint }) => {
+        const { latitude, longitude } = inputPlan.waypoints[currentWaypoint]!
+        const keySequence = [...latitude, ...enterSeq, ...longitude]
+        return {
           type: "PUSH_ITEM",
-          items: startKeySeq.reduce(onOffInputReducer, []),
-        },
-        { to: "deque" }
-      ),
-      inputNextWaypoint: send(
-        ({ inputPlan, currentWaypoint }) => {
-          const { latitude, longitude } = inputPlan.waypoints[currentWaypoint]!
-          const keySequence = [...latitude, ...enterSeq, ...longitude]
-          return {
-            type: "PUSH_ITEM",
-            items: keySequence.reduce(onOffInputReducer, []),
-          }
-        },
-        { to: "deque" }
-      ),
-      incrementAMPCDWaypoint: send(
-        {
-          type: "PUSH_ITEM",
-          items: nextWyptSeq.reduce(onOffInputReducer, []),
-        },
-        { to: "deque" }
-      ),
+          items: keySequence.reduce(onOffInputReducer, []),
+        }
+      }),
+      incrementAMPCDWaypoint: sendParent({
+        type: "PUSH_ITEM",
+        items: nextWyptSeq.reduce(onOffInputReducer, []),
+      }),
       incrementWaypointCounter: assign(({ currentWaypoint }) => ({
         currentWaypoint: currentWaypoint + 1,
       })),
@@ -115,6 +109,7 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
     guards: {
       hasMoreWaypoints: ({ inputPlan, currentWaypoint }) =>
         currentWaypoint < inputPlan.waypoints.length,
+      hasWaypoints: ({ inputPlan }) => !!inputPlan.waypoints.length,
     },
   }
 )

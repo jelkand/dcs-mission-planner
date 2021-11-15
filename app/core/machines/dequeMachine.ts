@@ -79,8 +79,7 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
       dequeHasItems: ({ deque }) => deque.length > 0,
     },
     actions: {
-      handleFirstInDeque: send(({ deque }) => deque[0]!, {
-        to: "dcsSocket",
+      handleFirstInDeque: sendParent(({ deque }) => deque[0]!, {
         delay: ({ deque }) => deque[0]?.delay || 0,
       }),
       shiftItem: assign((context) => {
