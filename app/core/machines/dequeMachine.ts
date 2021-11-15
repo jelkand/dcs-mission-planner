@@ -1,8 +1,6 @@
 import { DCSMessage } from "app/dcsIntegration/messageTypes"
 import { assign, createMachine, InvokeCallback, send, sendParent } from "xstate"
 
-const DCS_SOCKET = `${process.env.BLITZ_PUBLIC_DCS_SOCKET_HOST}:${process.env.BLITZ_PUBLIC_DCS_SOCKET_PORT}`
-
 export interface DequeMachineContext {
   deque: DequeItem[]
   socketRef?: any
@@ -41,19 +39,11 @@ const pushOrUnshiftActions = {
 export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent>(
   {
     id: "deque",
-    initial: "initializing",
+    initial: "checkingDeque",
     context: {
       deque: [],
     },
-    invoke: {
-      id: "dcsSocket",
-      src: "dcsSocketCallback",
-    },
     states: {
-      initializing: {
-        on: { ...pushOrUnshiftActions, DCS_SOCKET_CONNECTED: "checkingDeque" },
-        exit: "notifyInitialized",
-      },
       idle: {
         on: {
           PUSH_ITEM: {
@@ -88,42 +78,7 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
     guards: {
       dequeHasItems: ({ deque }) => deque.length > 0,
     },
-    services: {
-      dcsSocketCallback:
-        (ctx, event): InvokeCallback<DequeMachineEvent, any> =>
-        (callback, onReceive) => {
-          const dcsSocket = new WebSocket(DCS_SOCKET, "json")
-
-          // for now don't care about response
-          // dcsSocket.onmessage = (data) => callback({ type: "MESSAGE_RECEIVED", response: data })
-
-          dcsSocket.onopen = () => {
-            callback({ type: "DCS_SOCKET_CONNECTED" })
-          }
-
-          // for now don't care about errors or closing
-          // dcsSocket.onerror = (data) => {
-          //   console.log("error", { data })
-          // }
-
-          // dcsSocket.onclose = (data) => {
-          //   callback("DCS_SOCKET_CLOSED")
-          // }
-
-          onReceive((event) => {
-            if (event.type === "SEND_MESSAGE") {
-              dcsSocket.send(JSON.stringify(event.message))
-              callback({ type: "ITEM_HANDLED" })
-            }
-          })
-
-          return () => {
-            dcsSocket.close()
-          }
-        },
-    },
     actions: {
-      notifyInitialized: sendParent({ type: "INITIALIZED" }),
       handleFirstInDeque: send(({ deque }) => deque[0]!, {
         to: "dcsSocket",
         delay: ({ deque }) => deque[0]?.delay || 0,
