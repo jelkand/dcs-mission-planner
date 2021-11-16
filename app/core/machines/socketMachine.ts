@@ -24,6 +24,7 @@ export type SocketMachineEvent =
     }
   | { type: "DCS_SOCKET_CONNECTED" }
   | { type: "MESSAGE_RECEIVED"; response: any }
+  | { type: "SOCKET_INITIALIZED" }
   | SendMessage
 
 export const socketMachine = createMachine<SocketMachineContext, SocketMachineEvent>(
@@ -106,6 +107,7 @@ export const socketMachine = createMachine<SocketMachineContext, SocketMachineEv
           }
 
           onReceive((event) => {
+            console.log("got send")
             if (event.type === "SEND_MESSAGE") {
               dcsSocket.send(JSON.stringify(event.message))
             }
@@ -117,7 +119,7 @@ export const socketMachine = createMachine<SocketMachineContext, SocketMachineEv
         },
     },
     actions: {
-      notifyInitialized: sendParent({ type: "INITIALIZED" }),
+      notifyInitialized: sendParent({ type: "SOCKET_INITIALIZED" }),
       forwardToSocket: forwardTo("dcsSocket"),
       sendToParent: sendParent({ type: "MESSAGE_RECEIVED" }),
     },

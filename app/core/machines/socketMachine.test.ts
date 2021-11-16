@@ -3,7 +3,6 @@ import { interpret } from "xstate"
 import { socketMachine } from "./socketMachine"
 
 const socket = jest.fn()
-const handler = jest.fn()
 const notifier = jest.fn()
 const mockedSocketMachine = socketMachine
   .withConfig({
@@ -12,7 +11,6 @@ const mockedSocketMachine = socketMachine
     },
     actions: {
       notifyInitialized: notifier,
-      handleFirstInDeque: handler,
       sendToParent: jest.fn(),
     },
   })
@@ -28,6 +26,7 @@ describe("Socket Machine", () => {
     socketService.start()
 
     expect(socketService.state.matches("open.initializing")).toBe(true)
+    expect(socket).toBeCalled()
 
     socketService.send({ type: "DCS_SOCKET_CONNECTED" })
     expect(socketService.state.matches("open.ready")).toBe(true)
