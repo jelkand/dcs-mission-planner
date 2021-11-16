@@ -5,25 +5,43 @@ import { missionPlannerMachine } from "./missionPlannerMachine"
 describe.skip("Mission Planner Machine", () => {
   it("should connect to the socket", async () => {
     const missionPlannerService = interpret(missionPlannerMachine).onTransition((state, event) => {
-      console.log({ state: state.value, event })
+      // console.log({ event })
+      // console.log("deque state", state.context.dequeRef?.getSnapshot()?.value)
     })
 
     missionPlannerService.start()
+    await new Promise((resolve) => setTimeout(resolve, 500))
     missionPlannerService.send({
-      type: "PUSH_ITEM",
-      items: [
+      type: "SET_WAYPOINTS",
+      waypoints: [
         {
-          type: "SEND_MESSAGE",
-          message: { action: "input", payload: { deviceId: 0, inputId: 0, value: 0 } },
-          delay: 0,
+          latitude: ["N", "2", "4", "5", "2", "6", "6"],
+          longitude: ["E", "5", "3", "5", "3", "3", "0"],
+        },
+        {
+          latitude: ["N", "2", "5", "0", "6", "6", "9"],
+          longitude: ["E", "5", "4", "2", "4", "0", "0"],
+        },
+        {
+          latitude: ["N", "2", "5", "2", "4", "0", "8"],
+          longitude: ["E", "5", "4", "3", "9", "5", "5"],
+        },
+        {
+          latitude: ["N", "2", "5", "5", "2", "7", "6"],
+          longitude: ["E", "5", "5", "0", "2", "0", "3"],
+        },
+        {
+          latitude: ["N", "2", "4", "5", "2", "6", "6"],
+          longitude: ["E", "5", "3", "5", "3", "3", "0"],
+        },
+        {
+          latitude: ["N", "2", "6", "3", "4", "4", "7"],
+          longitude: ["E", "5", "6", "1", "8", "7", "1"],
         },
       ],
     })
+    missionPlannerService.send("START_ENTRY")
 
-    // const socketService = interpret(socketMachine).onTransition((state) => {
-    //   console.log({ state: state.value })
-    // })
-    // socketService.start()
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 5000))
   })
 })

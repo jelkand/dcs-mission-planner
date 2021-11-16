@@ -25,6 +25,7 @@ export type SocketMachineEvent =
   | { type: "DCS_SOCKET_CONNECTED" }
   | { type: "MESSAGE_RECEIVED"; response: any }
   | { type: "SOCKET_INITIALIZED" }
+  | { type: "RESET" }
   | SendMessage
 
 export const socketMachine = createMachine<SocketMachineContext, SocketMachineEvent>(
@@ -38,6 +39,7 @@ export const socketMachine = createMachine<SocketMachineContext, SocketMachineEv
     },
     on: {
       DCS_SOCKET_CLOSED: "closed",
+      RESET: "open",
     },
     states: {
       open: {
@@ -89,7 +91,6 @@ export const socketMachine = createMachine<SocketMachineContext, SocketMachineEv
           const dcsSocket = new WebSocket(DCS_SOCKET, "json")
 
           dcsSocket.onmessage = (data) => {
-            console.log("got message", data)
             callback({ type: "MESSAGE_RECEIVED", response: data })
           }
 
@@ -107,7 +108,6 @@ export const socketMachine = createMachine<SocketMachineContext, SocketMachineEv
           }
 
           onReceive((event) => {
-            console.log("got send")
             if (event.type === "SEND_MESSAGE") {
               dcsSocket.send(JSON.stringify(event.message))
             }

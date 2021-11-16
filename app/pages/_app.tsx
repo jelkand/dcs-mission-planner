@@ -1,5 +1,6 @@
 import { ChakraProvider } from "@chakra-ui/react"
 import LoginForm from "app/auth/components/LoginForm"
+import { DcsIntegrationProvider } from "app/contexts/dcsIntegrationProvider"
 import {
   AppProps,
   AuthenticationError,
@@ -17,12 +18,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <ChakraProvider theme={theme}>
-      <ErrorBoundary
-        FallbackComponent={RootErrorFallback}
-        onReset={useQueryErrorResetBoundary().reset}
-      >
-        {getLayout(<Component {...pageProps} />)}
-      </ErrorBoundary>
+      <DcsIntegrationProvider>
+        <ErrorBoundary
+          FallbackComponent={RootErrorFallback}
+          onReset={useQueryErrorResetBoundary().reset}
+        >
+          {getLayout(<Component {...pageProps} />)}
+        </ErrorBoundary>
+      </DcsIntegrationProvider>
     </ChakraProvider>
   )
 }

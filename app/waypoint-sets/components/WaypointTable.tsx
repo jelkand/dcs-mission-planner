@@ -34,8 +34,8 @@ export const WaypointTable = ({ waypoints }: WaypointTableProps) => (
         <Tr key={id || `waypoint-${elementOrder}`}>
           <Td>{elementOrder}</Td>
           <Td>{waypoint.name}</Td>
-          <Td>{decimalValueToDDMString(waypoint.coordinate.latitude, true)}</Td>
-          <Td>{decimalValueToDDMString(waypoint.coordinate.longitude, false)}</Td>
+          <Td>{decimalValueToDDMString(waypoint.coordinate.latitude, "northing")}</Td>
+          <Td>{decimalValueToDDMString(waypoint.coordinate.longitude, "easting")}</Td>
           <Td>
             {waypoint.coordinate.elevation} {waypoint.coordinate.elevationUnit}
           </Td>

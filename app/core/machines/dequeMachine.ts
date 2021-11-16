@@ -25,6 +25,7 @@ export type DequeMachineEvent =
     }
   | { type: "DCS_SOCKET_CONNECTED" }
   | { type: "ITEM_HANDLED" }
+  | { type: "RESET" }
   | SendMessage
 
 const pushOrUnshiftActions = {
@@ -43,6 +44,11 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
     context: {
       deque: [],
     },
+    on: {
+      RESET: {
+        actions: "clearDeque",
+      },
+    },
     states: {
       idle: {
         on: {
@@ -59,10 +65,13 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
       handlingItem: {
         on: {
           ...pushOrUnshiftActions,
-          ITEM_HANDLED: {
+        },
+        after: [
+          {
+            delay: ({ deque }) => deque[0]?.delay || 0,
             target: "checkingDeque",
           },
-        },
+        ],
         entry: "handleFirstInDeque",
         exit: "shiftItem",
       },
@@ -79,9 +88,8 @@ export const dequeMachine = createMachine<DequeMachineContext, DequeMachineEvent
       dequeHasItems: ({ deque }) => deque.length > 0,
     },
     actions: {
-      handleFirstInDeque: sendParent(({ deque }) => deque[0]!, {
-        delay: ({ deque }) => deque[0]?.delay || 0,
-      }),
+      clearDeque: assign({ deque: [] }),
+      handleFirstInDeque: sendParent(({ deque }) => deque[0]!),
       shiftItem: assign((context) => {
         const [, ...deque] = context.deque
         return {

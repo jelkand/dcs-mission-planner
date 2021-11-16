@@ -32,7 +32,7 @@ describe("HornetMachine ", () => {
 
     hornetService.start()
     expect(hornetService.state.matches("idle")).toBe(true)
-    hornetService.send("START")
+    hornetService.send("START_ENTRY")
     expect(hornetService.state.context.currentWaypoint).toBe(3)
     expect(hornetService.state.matches("idle")).toBe(true)
     expect(mockInputNextWaypoint).toBeCalledTimes(3)

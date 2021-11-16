@@ -22,9 +22,14 @@ describe("DequeMachine", () => {
           message: { action: "input", payload: { deviceId: 0, inputId: 0, value: 0 } },
           delay: 0,
         },
+        {
+          type: "SEND_MESSAGE",
+          message: { action: "input", payload: { deviceId: 0, inputId: 0, value: 0 } },
+          delay: 0,
+        },
       ],
     })
-    expect(handler).toHaveBeenCalled()
-    dequeService.send("ITEM_HANDLED")
+    await new Promise((resolve) => setTimeout(resolve, 200))
+    expect(handler).toHaveBeenCalledTimes(2)
   })
 })

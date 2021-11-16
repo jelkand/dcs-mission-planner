@@ -10,7 +10,7 @@ export interface HornetMachineContext {
   currentWaypoint: number
 }
 
-interface RawWaypoint {
+export interface RawWaypoint {
   latitude: Array<HornetKey>
   longitude: Array<HornetKey>
   elementOrder?: number
@@ -22,13 +22,16 @@ export type HornetMachineEvent =
       type: "INITIALIZED"
     }
   | {
-      type: "START"
+      type: "START_ENTRY"
     }
   | {
       type: "STOP"
     }
   | {
       type: "READY_FOR_WAYPOINTS"
+    }
+  | {
+      type: "RESET"
     }
   | {
       type: "SET_WAYPOINTS"
@@ -39,11 +42,23 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   {
     id: "hornetMachine",
     initial: "idle",
+    context: {
+      inputPlan: {
+        waypoints: [],
+      },
+      currentWaypoint: 0,
+    },
+    on: {
+      RESET: {
+        target: "idle",
+        actions: "clearInputPlan",
+      },
+    },
     states: {
       idle: {
         on: {
           SET_WAYPOINTS: { actions: "setWaypoints" },
-          START: { target: "waypointEntry", cond: "hasWaypoints" },
+          START_ENTRY: { target: "waypointEntry", cond: "hasWaypoints" },
         },
       },
       waypointEntry: {
@@ -78,6 +93,12 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
   },
   {
     actions: {
+      clearInputPlan: assign((_) => ({
+        inputPlan: {
+          waypoints: [],
+        },
+        currentWaypoint: 0,
+      })),
       setWaypoints: assign((_, event) => {
         if (event.type !== "SET_WAYPOINTS") return {}
         return {
