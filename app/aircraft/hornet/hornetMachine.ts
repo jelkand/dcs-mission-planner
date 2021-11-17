@@ -113,7 +113,7 @@ export const hornetMachine = createMachine<HornetMachineContext, HornetMachineEv
       }),
       inputNextWaypoint: sendParent(({ inputPlan, currentWaypoint }) => {
         const { latitude, longitude } = inputPlan.waypoints[currentWaypoint]!
-        const keySequence = [...latitude, ...enterSeq, ...longitude]
+        const keySequence = [...latitude, ...enterSeq, ...longitude, ...enterSeq]
         return {
           type: "PUSH_ITEM",
           items: keySequence.reduce(onOffInputReducer, []),

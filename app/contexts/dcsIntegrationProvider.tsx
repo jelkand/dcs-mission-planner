@@ -5,7 +5,7 @@ import React, { createContext } from "react"
 import { ActorRefFrom, Interpreter } from "xstate"
 
 interface DcsIntegrationContext {
-  missionPlannerService: ActorRefFrom<typeof missionPlannerMachine> // typeof useInterpret(missionPlannerMachine)
+  missionPlannerService: ActorRefFrom<typeof missionPlannerMachine>
   inputPlanIsOpen: boolean
   inputPlanOnOpen: () => void
   inputPlanOnClose: () => void

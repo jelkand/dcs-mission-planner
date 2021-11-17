@@ -8,10 +8,12 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
+  Heading,
 } from "@chakra-ui/react"
 import { useSelector } from "@xstate/react"
 import { DcsIntegrationContext } from "app/contexts/dcsIntegrationProvider"
-import { Head } from "blitz"
+import { NavBar } from "app/core/components/NavBar"
+import { Head, Link, Routes } from "blitz"
 import React, { ReactNode, useContext, useRef } from "react"
 
 type LayoutProps = {
@@ -52,9 +54,16 @@ const Layout = ({ title, children }: LayoutProps) => {
         <title>{title || "dcs-mission-planner"}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Button ref={menuBtnRef} colorScheme="teal" onClick={inputPlanOnOpen}>
-        Open
-      </Button>
+      {/* <Button ref={menuBtnRef} colorScheme="teal" onClick={inputPlanOnOpen}>
+          Open
+        </Button> */}
+
+      <NavBar />
+      {/* <Box width="100%" bg="black">
+        <Heading color="white" ml="2">
+          <Link href={Routes.Home()}>DCS Mission Planner</Link>
+        </Heading>
+      </Box> */}
 
       <Drawer
         isOpen={inputPlanIsOpen}
