@@ -1,5 +1,4 @@
-import { Box, Code, Heading, List, ListItem, Text, VStack } from "@chakra-ui/react"
-import { Link } from "app/core/components/Link"
+import { Box, Code, Heading, Link, List, ListItem, Text, VStack } from "@chakra-ui/react"
 import Layout from "app/core/layouts/Layout"
 import { BlitzPage, Head } from "blitz"
 import React from "react"
@@ -18,14 +17,17 @@ const InstallationPage: BlitzPage = () => {
           <Text>
             DCS Waypoint Manager requires one folder to be installed to your Saved Game files. These
             files can be found{" "}
-            <Link href="github.com" textDecoration="underline">
+            <Link
+              href="https://github.com/jelkand/dcs-mission-planner/releases"
+              textDecoration="underline"
+            >
               here
             </Link>{" "}
             in zip format.
           </Text>
           <Text>
             To install them in the correct place, unzip the folder and add drop the{" "}
-            <Code>Scripts</Code> folder into your <Code>DCS/Saved Games</Code> folder.
+            <Code>Scripts</Code> folder into your <Code>Saved Games/DCS</Code> folder.
           </Text>
 
           <Text>
@@ -34,7 +36,9 @@ const InstallationPage: BlitzPage = () => {
           </Text>
 
           <Code display="block" whiteSpace="pre">
-            example line of code to add
+            {
+              "local msnplannerlfs = require('lfs');dofile(msnplannerlfs.writedir()..[[ScriptsMissionPlannerMissionPlanner.export.lua]])"
+            }
           </Code>
         </VStack>
       </Box>
