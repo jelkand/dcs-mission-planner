@@ -36,8 +36,8 @@ missionPlanner.config = {
 
 
 local function executeClickableAction(args)
-  missionPlanner.log("Pressing button " .. args.command .. " on device " .. args.device .. " with value " .. args.value)
-  GetDevice(args.device):performClickableAction(args.command, args.value)
+  missionPlanner.log("Pressing button " .. args.inputId .. " on device " .. args.deviceId .. " with value " .. args.value)
+  GetDevice(args.deviceId):performClickableAction(args.inputId, args.value)
 end
 
 
@@ -63,6 +63,9 @@ local function json_protocol(ws)
     if message then
       local decodedMessage = JSON:decode(message)
       missionPlanner.log("Prettified: " .. JSON:encode_pretty(decodedMessage))
+      if (decodedMessage.action == "input") then
+        executeClickableAction(decodedMessage.payload)
+      end
     else
       ws:close()
       return
